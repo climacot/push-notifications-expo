@@ -8,8 +8,8 @@ const { alert } = Alert
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
-    shouldPlaySound: false,
-    shouldSetBadge: false
+    shouldPlaySound: true,
+    shouldSetBadge: true
   })
 })
 
@@ -20,6 +20,10 @@ export default function App () {
   const responseListener = useRef()
 
   useEffect(() => {
+    Notifications.getDevicePushTokenAsync().then((token) => {
+      console.log(token)
+    })
+
     registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
 
     // This listener is fired whenever a notification is received while the app is foregrounded
@@ -87,6 +91,7 @@ async function registerForPushNotificationsAsync () {
   let token
   if (Device.isDevice) {
     const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    console.log(existingStatus)
     let finalStatus = existingStatus
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync()
